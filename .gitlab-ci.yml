@@ -1,0 +1,129 @@
+image:
+  name: hashicorp/terraform:$TERRAFORM_VERSION
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+before_script:
+  - terraform version
+
+stages:
+  - prepare
+  - apply
+  - destroy
+
+# ▼ templates ==========================================================================================================
+
+# environment (dev/staging/prod) ---------------------------------------------------------------------------------------
+.env_dev_template: &env_dev_template
+  variables:
+    env: dev
+    AWS_DEFAULT_REGION: $DEV_AWS_DEFAULT_REGION
+    AWS_ACCESS_KEY_ID: $DEV_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $DEV_AWS_SECRET_ACCESS_KEY
+  only:
+    - master
+  except:
+    - schedules
+
+.env_staging_template: &env_staging_template
+  variables:
+    env: staging
+    AWS_DEFAULT_REGION: $STAGING_AWS_DEFAULT_REGION
+    AWS_ACCESS_KEY_ID: $STAGING_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $STAGING_AWS_SECRET_ACCESS_KEY
+  only:
+    - tags
+  except:
+    - schedules
+
+.env_prod_template: &env_prod_template
+  variables:
+    env: prod
+    AWS_DEFAULT_REGION: $PROD_AWS_DEFAULT_REGION
+    AWS_ACCESS_KEY_ID: $PROD_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $PROD_AWS_SECRET_ACCESS_KEY
+  only:
+    - tags
+  except:
+    - schedules
+
+# prepare --------------------------------------------------------------------------------------------------------------
+.prepare_template: &prepare_definition
+  stage: prepare
+  tags:
+    - docker
+  script:
+    - terraform init -backend-config=config/backend-${env}.conf
+    - terraform validate -var-file=config/${env}.tfvars
+    - terraform plan -var-file=config/${env}.tfvars
+
+# apply ----------------------------------------------------------------------------------------------------------------
+.apply_template: &apply_definition
+  stage: apply
+  tags:
+    - docker
+  script:
+    - terraform init -backend-config=config/backend-${env}.conf
+    - terraform apply -auto-approve -var-file=config/${env}.tfvars
+
+# ▲ templates ==========================================================================================================
+
+# ▼ jobs ===============================================================================================================
+
+# prepare --------------------------------------------------------------------------------------------------------------
+prepare:dev:
+  <<: *prepare_definition
+  <<: *env_dev_template
+
+prepare:staging:
+  <<: *prepare_definition
+  <<: *env_staging_template
+
+prepare:prod:
+  <<: *prepare_definition
+  <<: *env_prod_template
+
+# apply ----------------------------------------------------------------------------------------------------------------
+apply:dev:
+  <<: *apply_definition
+  <<: *env_dev_template
+  environment:
+    name: DEV
+
+apply:staging:
+  <<: *apply_definition
+  <<: *env_staging_template
+  environment:
+    name: STAGING
+
+apply:prod:
+  <<: *apply_definition
+  <<: *env_prod_template
+  environment:
+    name: PROD
+  when: manual
+
+# destroy --------------------------------------------------------------------------------------------------------------
+# this is a special for DEV stage only ... will be destroyed every evening to save money ;-)
+# no separate templates (and DO NOT change this)
+# only scheduled ...
+# only with ENV via scheduler job
+destroy:dev:scheduled:
+  stage: destroy
+  tags:
+    - docker
+  script:
+    - terraform init -backend-config=config/backend-${env}.conf
+    - terraform destroy -auto-approve -var-file=config/${env}.tfvars
+    # - (if [[ "${ENV}" =~ ^(DEV|STAGING|PROD)$ ]]; then echo "forbidden"; else terraform destroy -auto-approve -var-file=config/${env}.tfvars; fi); # ToDo untested but maybe helpful
+  variables:
+    env: $ENV
+    AWS_DEFAULT_REGION: $DEV_AWS_DEFAULT_REGION
+    AWS_ACCESS_KEY_ID: $DEV_AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $DEV_AWS_SECRET_ACCESS_KEY
+  only:
+    - schedules
+  when: always
+
+# ▲ jobs ===============================================================================================================
