@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/tox-aws-terraform/tox-tf-man/badges/master/pipeline.svg)](https://gitlab.com/tox-aws-terraform/tox-tf-man/commits/master)
+
 ***
 
 # tox-tf-man
