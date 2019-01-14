@@ -11,8 +11,8 @@ resource "aws_lambda_function" "man_dummyone" {
   role          = "${aws_iam_role.man_service.arn}"
   handler       = "dummyone"
   runtime       = "go1.x"
-//  timeout       = 300
-//  memory_size   = 128
+  //  timeout       = 300
+  //  memory_size   = 128
   description   = "dummy one ..."
   //  environment   = {
   //    variables = {
@@ -30,8 +30,8 @@ resource "aws_lambda_function" "man_dummytwo" {
   role          = "${aws_iam_role.man_service.arn}"
   handler       = "dummytwo"
   runtime       = "go1.x"
-//  timeout       = 300
-//  memory_size   = 128
+  //  timeout       = 300
+  //  memory_size   = 128
   description   = "dummy two ..."
   //  environment   = {
   //    variables = {
@@ -50,13 +50,14 @@ resource "aws_lambda_function" "man_unzip" {
   handler       = "unzip"
   runtime       = "go1.x"
   timeout       = 300
-//  memory_size   = 128
+  //  memory_size   = 128
   description   = "... unzip ..."
-  //  environment   = {
-  //    variables = {
-  //      S3_BUCKET = "${aws_s3_bucket.stash.bucket}"
-  //    }
-  //  }
+  environment   = {
+    variables = {
+      S3_PATH_INCOMING     = "${var.s3_path_incoming}"
+      S3_PATH_UNCOMPRESSED = "${var.s3_path_uncompressed}"
+    }
+  }
   tags          = "${merge(local.common_tags, map(
     "Name", local.lambda_unzip
   ))}"

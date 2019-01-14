@@ -28,9 +28,18 @@ resource "aws_s3_bucket" "stash" {
     )}"
 }
 resource "aws_s3_bucket_object" "stash_readme" {
-  bucket = "${aws_s3_bucket.stash.bucket}"
-  key    = "incoming/README.md"
-  source = "docs/S3_README.md"
+  bucket       = "${aws_s3_bucket.stash.bucket}"
+  key          = "${var.s3_path_incoming}/README.md"
+  source       = "docs/S3_README.md"
   content_type = "text/markdown"
-  etag   = "${md5(file("docs/S3_README.md"))}"
+  etag         = "${md5(file("docs/S3_README.md"))}"
+}
+resource "aws_s3_bucket_notification" "stash_notification" {
+  bucket = "${aws_s3_bucket.stash.id}"
+  lambda_function {
+    lambda_function_arn = "${aws_lambda_function.man_unzip.arn}"
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = "${var.s3_path_incoming}/"
+    filter_suffix       = ".zip"
+  }
 }

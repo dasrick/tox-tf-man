@@ -49,3 +49,19 @@ variable "man-service-version" {
 //  type        = "string",
 //  default     = "v0-0-0"
 //}
+
+variable "s3_path_incoming" {
+  description = "S3 path/prefix for incoming files"
+  type        = "string",
+  default     = "incoming"
+}
+variable "s3_path_uncompressed" {
+  description = "S3 path/prefix for uncompressed files"
+  type        = "string",
+  default     = "uncompressed"
+}
+variable "s3_path_processed" {
+  description = "S3 path/prefix for processed files"
+  type        = "string",
+  default     = "processed"
+}
