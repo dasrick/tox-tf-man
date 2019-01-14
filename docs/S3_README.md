@@ -1,0 +1,3 @@
+# S3 incoming
+
+Please upload only compressed CSV files ...
