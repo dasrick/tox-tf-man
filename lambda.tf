@@ -10,10 +10,8 @@ resource "aws_lambda_function" "man_unzip" {
   role          = "${aws_iam_role.man_unzip.arn}"
   handler       = "unzip"
   runtime       = "go1.x"
-  timeout       = 300
-
-  //  memory_size   = 128
-  description = "... unzip ..."
+  timeout       = 900
+  description   = "... unzip ... timeout: 15min .. :-("
 
   environment = {
     variables = {
@@ -37,9 +35,7 @@ resource "aws_lambda_function" "man_import" {
   handler       = "import"
   runtime       = "go1.x"
   timeout       = 300
-
-  //  memory_size   = 512
-  description = "... import ..."
+  description   = "... import ... timeout: 5min"
 
   environment = {
     variables = {
