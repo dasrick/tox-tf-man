@@ -51,11 +51,11 @@ resource "aws_s3_bucket_object" "stash_readme_uncompressed" {
   etag         = "${md5(file("docs/S3_UNCOMPRESSED_README.md"))}"
 }
 
-resource "aws_s3_bucket_notification" "stash_notification_incoming_unzip" {
+resource "aws_s3_bucket_notification" "stash_notifications" {
   depends_on = [
     "aws_s3_bucket.stash",
-    "aws_s3_bucket_object.stash_readme_incoming",
     "aws_lambda_function.man_unzip",
+    "aws_lambda_function.man_import",
   ]
 
   bucket = "${aws_s3_bucket.stash.id}"
@@ -64,18 +64,8 @@ resource "aws_s3_bucket_notification" "stash_notification_incoming_unzip" {
     lambda_function_arn = "${aws_lambda_function.man_unzip.arn}"
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "${var.s3_path_incoming}/"
-    filter_suffix       = ".zip"
+    filter_suffix       = ".gz"
   }
-}
-
-resource "aws_s3_bucket_notification" "stash_notification_uncompressed_import" {
-  depends_on = [
-    "aws_s3_bucket.stash",
-    "aws_s3_bucket_object.stash_readme_uncompressed",
-    "aws_lambda_function.man_import",
-  ]
-
-  bucket = "${aws_s3_bucket.stash.id}"
 
   lambda_function {
     lambda_function_arn = "${aws_lambda_function.man_import.arn}"
