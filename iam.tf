@@ -23,7 +23,8 @@ data "template_file" "man_importer" {
   template = "${file("policy/policy-man-importer.json")}"
 
   vars {
-    S3_STASH_ARN = "${aws_s3_bucket.stash.arn}"
+    S3_STASH_ARN  = "${aws_s3_bucket.stash.arn}"
+    SNS_TOPIC_ARN = "${aws_sns_topic.address_import.arn}"
   }
 }
 
@@ -47,6 +48,6 @@ data "template_file" "man_transformer" {
   template = "${file("policy/policy-man-transformer.json")}"
 
   vars {
-    S3_STASH_ARN = "${aws_s3_bucket.stash.arn}"
+    SNS_TOPIC_ARN = "${aws_sns_topic.address_import.arn}"
   }
 }

@@ -11,13 +11,14 @@ resource "aws_lambda_function" "man_importer" {
   handler       = "importer"
   runtime       = "go1.x"
   timeout       = 900
-  description   = "... importer ... timeout: 15min"
+  description   = "S3 => SNS ... timeout: 15min"
 
-  //  environment = {
-  //    variables = {
-  //      S3_PATH_PROCESSED    = "${var.s3_path_processed}"
-  //    }
-  //  }
+  environment = {
+    variables = {
+      SNS_TOPIC_ARN = "${aws_sns_topic.address_import.arn}"
+    }
+  }
+
   tags = "${merge(local.common_tags, map(
     "Name", local.lambda_importer
   ))}"
@@ -33,7 +34,7 @@ resource "aws_lambda_function" "man_transformer" {
   handler       = "transformer"
   runtime       = "go1.x"
   timeout       = 300
-  description   = "... transformer ... timeout: 5min"
+  description   = "SNS => DDB ... timeout: 5min"
 
   //  environment = {
   //    variables = {

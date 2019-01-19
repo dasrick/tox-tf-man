@@ -10,6 +10,15 @@
       "Resource": [
         "arn:aws:logs:*:*:log-group:/aws/lambda/*:*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sns:*"
+      ],
+      "Resource": [
+        "${SNS_TOPIC_ARN}"
+      ]
     }
   ]
 }

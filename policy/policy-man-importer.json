@@ -31,7 +31,7 @@
         "sns:*"
       ],
       "Resource": [
-        "${S3_STASH_ARN}"
+        "${SNS_TOPIC_ARN}"
       ]
     }
   ]
