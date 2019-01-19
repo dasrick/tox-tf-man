@@ -24,6 +24,15 @@
         "${S3_STASH_ARN}",
         "${S3_STASH_ARN}/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "sns:*"
+      ],
+      "Resource": [
+        "${S3_STASH_ARN}"
+      ]
     }
   ]
 }

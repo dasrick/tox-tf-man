@@ -1,13 +1,13 @@
-// lambda unzip --------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_log_group" "lambda_unzip" {
-  depends_on        = ["aws_lambda_function.man_unzip"]
-  name              = "/aws/lambda/${aws_lambda_function.man_unzip.function_name}"
+// lambda importer -------------------------------------------------------------------------------------------------------
+resource "aws_cloudwatch_log_group" "lambda_importer" {
+  depends_on        = ["aws_lambda_function.man_importer"]
+  name              = "/aws/lambda/${aws_lambda_function.man_importer.function_name}"
   retention_in_days = 90
 }
 
 // lambda import -------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_log_group" "lambda_import" {
-  depends_on        = ["aws_lambda_function.man_import"]
-  name              = "/aws/lambda/${aws_lambda_function.man_import.function_name}"
+resource "aws_cloudwatch_log_group" "lambda_transformer" {
+  depends_on        = ["aws_lambda_function.man_transformer"]
+  name              = "/aws/lambda/${aws_lambda_function.man_transformer.function_name}"
   retention_in_days = 90
 }

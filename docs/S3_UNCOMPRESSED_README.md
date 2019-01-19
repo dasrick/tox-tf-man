@@ -1,3 +1,0 @@
-# S3 uncompressed
-
-Please upload only uncompressed CSV files ...

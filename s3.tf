@@ -42,35 +42,25 @@ resource "aws_s3_bucket_object" "stash_readme_incoming" {
   etag         = "${md5(file("docs/S3_IMPORT_README.md"))}"
 }
 
-resource "aws_s3_bucket_object" "stash_readme_uncompressed" {
-  depends_on   = ["aws_s3_bucket.stash"]
-  bucket       = "${aws_s3_bucket.stash.bucket}"
-  key          = "${var.s3_path_uncompressed}/README.md"
-  source       = "docs/S3_UNCOMPRESSED_README.md"
-  content_type = "text/markdown"
-  etag         = "${md5(file("docs/S3_UNCOMPRESSED_README.md"))}"
-}
-
 resource "aws_s3_bucket_notification" "stash_notifications" {
   depends_on = [
     "aws_s3_bucket.stash",
-    "aws_lambda_function.man_unzip",
-    "aws_lambda_function.man_import",
+    "aws_lambda_function.man_importer",
   ]
 
   bucket = "${aws_s3_bucket.stash.id}"
 
   lambda_function {
-    lambda_function_arn = "${aws_lambda_function.man_unzip.arn}"
+    lambda_function_arn = "${aws_lambda_function.man_importer.arn}"
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "${var.s3_path_incoming}/"
-    filter_suffix       = ".gz"
+    filter_suffix       = ".csv"
   }
 
   lambda_function {
-    lambda_function_arn = "${aws_lambda_function.man_import.arn}"
+    lambda_function_arn = "${aws_lambda_function.man_importer.arn}"
     events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "${var.s3_path_uncompressed}/"
-    filter_suffix       = ".csv"
+    filter_prefix       = "${var.s3_path_incoming}/"
+    filter_suffix       = ".gz"
   }
 }

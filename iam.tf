@@ -1,50 +1,50 @@
 locals {
-  role_name_man_unzip  = "${local.name_prefix}-man-unzip"
-  role_name_man_import = "${local.name_prefix}-man-import"
+  role_name_man_importer    = "${local.name_prefix}-man-importer"
+  role_name_man_transformer = "${local.name_prefix}-man-transformer"
 }
 
-// cmd unzip -----------------------------------------------------------------------------------------------------------
-resource "aws_iam_role" "man_unzip" {
-  name               = "${local.role_name_man_unzip}"
+// cmd importer --------------------------------------------------------------------------------------------------------
+resource "aws_iam_role" "man_importer" {
+  name               = "${local.role_name_man_importer}"
   assume_role_policy = "${file("policy/assume-role-policy-lambda.json")}"
 
   tags = "${merge(local.common_tags, map(
-    "Name", local.role_name_man_unzip
+    "Name", local.role_name_man_importer
   ))}"
 }
 
-resource "aws_iam_role_policy" "man_unzip" {
-  name   = "${local.role_name_man_unzip}"
-  role   = "${aws_iam_role.man_unzip.id}"
-  policy = "${data.template_file.man_unzip.rendered}"
+resource "aws_iam_role_policy" "man_importer" {
+  name   = "${local.role_name_man_importer}"
+  role   = "${aws_iam_role.man_importer.id}"
+  policy = "${data.template_file.man_importer.rendered}"
 }
 
-data "template_file" "man_unzip" {
-  template = "${file("policy/policy-man-unzip.json")}"
+data "template_file" "man_importer" {
+  template = "${file("policy/policy-man-importer.json")}"
 
   vars {
     S3_STASH_ARN = "${aws_s3_bucket.stash.arn}"
   }
 }
 
-// cmd import ----------------------------------------------------------------------------------------------------------
-resource "aws_iam_role" "man_import" {
-  name               = "${local.role_name_man_import}"
+// cmd transformer -----------------------------------------------------------------------------------------------------
+resource "aws_iam_role" "man_transformer" {
+  name               = "${local.role_name_man_transformer}"
   assume_role_policy = "${file("policy/assume-role-policy-lambda.json")}"
 
   tags = "${merge(local.common_tags, map(
-    "Name", local.role_name_man_import
+    "Name", local.role_name_man_transformer
   ))}"
 }
 
-resource "aws_iam_role_policy" "man_import" {
-  name   = "${local.role_name_man_import}"
-  role   = "${aws_iam_role.man_import.id}"
-  policy = "${data.template_file.man_import.rendered}"
+resource "aws_iam_role_policy" "man_transformer" {
+  name   = "${local.role_name_man_transformer}"
+  role   = "${aws_iam_role.man_transformer.id}"
+  policy = "${data.template_file.man_transformer.rendered}"
 }
 
-data "template_file" "man_import" {
-  template = "${file("policy/policy-man-import.json")}"
+data "template_file" "man_transformer" {
+  template = "${file("policy/policy-man-transformer.json")}"
 
   vars {
     S3_STASH_ARN = "${aws_s3_bucket.stash.arn}"
