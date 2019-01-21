@@ -19,6 +19,15 @@
       "Resource": [
         "${SNS_TOPIC_ARN}"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:*"
+      ],
+      "Resource": [
+        "${DYNAMODB_SOURCE_ARN}"
+      ]
     }
   ]
 }

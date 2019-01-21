@@ -36,11 +36,12 @@ resource "aws_lambda_function" "man_transformer" {
   timeout       = 300
   description   = "SNS => DDB ... timeout: 5min"
 
-  //  environment = {
-  //    variables = {
-  //      S3_PATH_PROCESSED    = "${var.s3_path_processed}"
-  //    }
-  //  }
+  environment = {
+    variables = {
+      DYNAMODB_SOURCE_NAME = "${aws_dynamodb_table.man_source.name}"
+    }
+  }
+
   tags = "${merge(local.common_tags, map(
     "Name", local.lambda_transformer
   ))}"

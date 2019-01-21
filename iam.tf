@@ -48,6 +48,7 @@ data "template_file" "man_transformer" {
   template = "${file("policy/policy-man-transformer.json")}"
 
   vars {
-    SNS_TOPIC_ARN = "${aws_sns_topic.address_import.arn}"
+    SNS_TOPIC_ARN       = "${aws_sns_topic.address_import.arn}"
+    DYNAMODB_SOURCE_ARN = "${aws_dynamodb_table.man_source.arn}"
   }
 }
