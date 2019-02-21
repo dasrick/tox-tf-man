@@ -5,7 +5,7 @@ locals {
 
 resource "aws_lambda_function" "importer" {
   s3_bucket     = "${var.s3-artifacts}"
-  s3_key        = "man-service/${var.man-service-version}/importer.zip"
+  s3_key        = "${local.s3_key_golang_man}importer.zip"
   function_name = "${local.lambda_importer}"
   role          = "${aws_iam_role.man_importer.arn}"
   handler       = "importer"
@@ -23,12 +23,12 @@ resource "aws_lambda_function" "importer" {
     "Name", local.lambda_importer
   ))}"
 
-  source_code_hash = "${timestamp()}"
+  //  source_code_hash = "${timestamp()}"
 }
 
 resource "aws_lambda_function" "transformer" {
   s3_bucket     = "${var.s3-artifacts}"
-  s3_key        = "man-service/${var.man-service-version}/transformer.zip"
+  s3_key        = "${local.s3_key_golang_man}transformer.zip"
   function_name = "${local.lambda_transformer}"
   role          = "${aws_iam_role.man_transformer.arn}"
   handler       = "transformer"
@@ -46,5 +46,5 @@ resource "aws_lambda_function" "transformer" {
     "Name", local.lambda_transformer
   ))}"
 
-  source_code_hash = "${timestamp()}"
+  //  source_code_hash = "${timestamp()}"
 }

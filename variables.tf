@@ -36,7 +36,8 @@ variable "tag_pname" {
 
 // locals --------------------------------------------------------------------------------------------------------------
 locals {
-  name_prefix = "${var.application}-${var.environment}"
+  name_prefix       = "${var.application}-${var.environment}"
+  s3_key_golang_man = "${var.golang_man_path}${var.golang_man_version}/"
 
   common_tags = {
     Environment = "${var.tag_environment}"
@@ -44,13 +45,17 @@ locals {
   }
 }
 
-// =====================================================================================================================
-
-// lambda versions -----------------------------------------------------------------------------------------------------
-variable "man-service-version" {
-  description = "Lambdas of MAN services"
+// lambda pathes and versions ------------------------------------------------------------------------------------------
+variable "golang_man_path" {
+  description = "Path of lambdas of yolo based on golang"
   type        = "string"
-  default     = "master"                  // poss. names v1-2-3, master, abc-1234
+  default     = "man-service/"
+}
+
+variable "golang_man_version" {
+  description = "Version of lambdas of yolo based on golang"
+  type        = "string"
+  default     = "v0-1-0"
 }
 
 // s3 ------------------------------------------------------------------------------------------------------------------
