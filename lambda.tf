@@ -3,7 +3,7 @@ locals {
   lambda_transformer = "${local.name_prefix}-transformer"
 }
 
-resource "aws_lambda_function" "man_importer" {
+resource "aws_lambda_function" "importer" {
   s3_bucket     = "${var.s3-artifacts}"
   s3_key        = "man-service/${var.man-service-version}/importer.zip"
   function_name = "${local.lambda_importer}"
@@ -26,7 +26,7 @@ resource "aws_lambda_function" "man_importer" {
   source_code_hash = "${timestamp()}"
 }
 
-resource "aws_lambda_function" "man_transformer" {
+resource "aws_lambda_function" "transformer" {
   s3_bucket     = "${var.s3-artifacts}"
   s3_key        = "man-service/${var.man-service-version}/transformer.zip"
   function_name = "${local.lambda_transformer}"

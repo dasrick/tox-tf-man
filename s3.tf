@@ -45,20 +45,20 @@ resource "aws_s3_bucket_object" "stash_readme_incoming" {
 resource "aws_s3_bucket_notification" "stash_notifications" {
   depends_on = [
     "aws_s3_bucket.stash",
-    "aws_lambda_function.man_importer",
+    "aws_lambda_function.importer",
   ]
 
   bucket = "${aws_s3_bucket.stash.id}"
 
   lambda_function {
-    lambda_function_arn = "${aws_lambda_function.man_importer.arn}"
+    lambda_function_arn = "${aws_lambda_function.importer.arn}"
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "${var.s3_path_incoming}/"
     filter_suffix       = ".csv"
   }
 
   lambda_function {
-    lambda_function_arn = "${aws_lambda_function.man_importer.arn}"
+    lambda_function_arn = "${aws_lambda_function.importer.arn}"
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = "${var.s3_path_incoming}/"
     filter_suffix       = ".gz"
